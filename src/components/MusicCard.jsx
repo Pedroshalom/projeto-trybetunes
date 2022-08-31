@@ -39,7 +39,7 @@ class MusicCard extends React.Component {
     const { CarregandoTexto, isFavorite } = this.state;
     if (CarregandoTexto) return <Carregando />;
     return (
-      <div className="lista2">
+      <div>
         <h4>{trackName}</h4>
         <audio data-testid="audio-component" src={ previewUrl } controls>
           <track kind="captions" />

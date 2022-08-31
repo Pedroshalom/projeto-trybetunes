@@ -45,10 +45,11 @@ class Search extends React.Component {
     const {
       artist, albums, search, ButtonDisabled, loading } = this.state;
     return (
-      <>
+      <div className="imput1">
         <Header />
         {loading ? <Loading /> : (
           <div
+            className="searchh"
             data-testid="page-search
           "
           >
@@ -61,6 +62,7 @@ class Search extends React.Component {
               onChange={ this.handlechange }
             />
             <button
+              className="button2"
               type="submit"
               data-testid="search-artist-button"
               disabled={ ButtonDisabled }
@@ -72,7 +74,7 @@ class Search extends React.Component {
         )}
         <div>
           {!albums.length ? 'Nenhum álbum foi encontrado' : (
-            <div>
+            <div className="search">
               <p>{`Resultado de álbuns de: ${search}`}</p>
               {albums.map(({
                 artistName,
@@ -83,7 +85,7 @@ class Search extends React.Component {
                 releaseDate,
                 trackCount,
               }) => (
-                <div key={ collectionId }>
+                <div key={ collectionId } className="lista">
                   <img src={ artworkUrl100 } alt={ artistName } />
                   <h4>{ artistName }</h4>
                   <p>{ collectionPrice }</p>
@@ -100,7 +102,7 @@ class Search extends React.Component {
             </div>
           )}
         </div>
-      </>
+      </div>
     );
   }
 }

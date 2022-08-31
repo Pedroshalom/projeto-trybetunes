@@ -23,7 +23,7 @@ class Login extends Component {
     const { nome, loading, buttonClick } = this.state;
     const numberMin = 3;
     return (
-      <div data-testid="page-login">
+      <div data-testid="page-login" className="login-page">
         {loading === true && (
           <Loading />
         )}
@@ -34,6 +34,7 @@ class Login extends Component {
         }
         Nome:
         <input
+          className="imput"
           placeholder="Digite seu nome"
           type="text"
           data-testid="login-name-input"
@@ -41,6 +42,7 @@ class Login extends Component {
         />
 
         <button
+          className="butao"
           type="button"
           data-testid="login-submit-button"
           onClick={ this.handleClick }

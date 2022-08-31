@@ -29,13 +29,12 @@ class Header extends React.Component {
     } = this.state;
     return (
       <header data-testid="header-component">
-        <p data-testid="header-user-name">
+        <p className="heeader" data-testid="header-user-name">
           { loading ? <Loading /> : `${clientName.name}, você está logado` }
           <Link data-testid="link-to-search" to="/search">Search</Link>
           <Link data-testid="link-to-favorites" to="/favorites">Favorites</Link>
           <Link data-testid="link-to-profile" to="/profile">Profile</Link>
         </p>
-
       </header>
     );
   }
