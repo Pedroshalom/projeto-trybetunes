@@ -48,7 +48,10 @@ class Search extends React.Component {
       <>
         <Header />
         {loading ? <Loading /> : (
-          <div>
+          <div
+            data-testid="page-search
+          "
+          >
             <input
               type="text"
               name="artist"
@@ -70,7 +73,7 @@ class Search extends React.Component {
         <div>
           {!albums.length ? 'Nenhum álbum foi encontrado' : (
             <div>
-              <p>{`Resultado para: ${search}`}</p>
+              <p>{`Resultado de álbuns de: ${search}`}</p>
               {albums.map(({
                 artistName,
                 collectionId,
