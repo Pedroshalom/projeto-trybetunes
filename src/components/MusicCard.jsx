@@ -45,7 +45,7 @@ class MusicCard extends React.Component {
           <track kind="captions" />
           Não Encontrado!
           {' '}
-          <p>audio</p>
+          <p>áudio</p>
           .
         </audio>
         <div>
