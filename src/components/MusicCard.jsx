@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, removeSong } from '../services/favoriteSongsAPI';
 import Carregando from '../Loading';
 
 class MusicCard extends React.Component {
@@ -27,10 +27,19 @@ class MusicCard extends React.Component {
     this.setState({ CarregandoTexto: false });
   };
 
+  apagaDosFavoritos = async () => {
+    this.setState({ CarregandoTexto: true });
+    await removeSong(this.props);
+    this.setState({ CarregandoTexto: false });
+  };
+
   handleCheckbox = ({ target: { checked } }) => {
     if (checked === true) {
       this.setState({ isFavorite: true });
       this.adicionaAosFavoritos();
+    } else {
+      this.setState({ isFavorite: false });
+      this.apagaDosFavoritos();
     }
   };
 
