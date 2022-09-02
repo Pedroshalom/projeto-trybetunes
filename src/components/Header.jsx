@@ -28,7 +28,8 @@ class Header extends React.Component {
       loading,
     } = this.state;
     return (
-      <header data-testid="header-component">
+      <header className="header" data-testid="header-component">
+        <h1 className="title">Som na Caixa</h1>
         <p className="heeader" data-testid="header-user-name">
           { loading ? <Loading /> : `${clientName.name}, você está logado` }
           <Link data-testid="link-to-search" to="/search">Search</Link>

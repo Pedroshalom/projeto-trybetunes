@@ -5,7 +5,7 @@ class Profile extends React.Component {
   render() {
     return (
       <>
-        <Header />
+        <Header className="linkk" />
         <div data-testid="page-profile" />
       </>
     );

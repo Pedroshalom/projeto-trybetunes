@@ -46,10 +46,10 @@ class Search extends React.Component {
       artist, albums, search, ButtonDisabled, loading } = this.state;
     return (
       <div className="imput1">
-        <Header />
+        <Header className="linkk" />
         {loading ? <Loading /> : (
           <div
-            className="searchh"
+            className="search"
             data-testid="page-search
           "
           >
@@ -72,10 +72,10 @@ class Search extends React.Component {
             </button>
           </div>
         )}
-        <div>
+        <div className="artist">
           {!albums.length ? 'Nenhum álbum foi encontrado' : (
-            <div className="search">
-              <p>{`Resultado de álbuns de: ${search}`}</p>
+            <div className="info-cards">
+              <p className="resultadoAlbum">{`Resultado de álbuns de: ${search}`}</p>
               {albums.map(({
                 artistName,
                 collectionId,
@@ -85,7 +85,7 @@ class Search extends React.Component {
                 releaseDate,
                 trackCount,
               }) => (
-                <div key={ collectionId } className="lista">
+                <div className="info" key={ collectionId }>
                   <img src={ artworkUrl100 } alt={ artistName } />
                   <h4>{ artistName }</h4>
                   <p>{ collectionPrice }</p>

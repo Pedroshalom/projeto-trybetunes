@@ -51,7 +51,7 @@ class Album extends React.Component {
     return (
       <div data-testid="page-album">
         <Header />
-        <section>
+        <section className="page-album">
           <div>
             <img alt="album cover" src={ artworkUrl100 } />
             <h3 data-testid="album-name">{`${collectionName}`}</h3>

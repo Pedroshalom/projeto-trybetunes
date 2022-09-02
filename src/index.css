@@ -1,3 +1,7 @@
+* { margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -50,18 +54,149 @@ code {
   color: black;
 }
 
+.linkk {
+  color: whitesmoke;
+}
+
+.header a {
+color: whitesmoke;
+}
+
 .heeader {
   align-items: center;
-background-color: grey;
+/* background-color: grey; */
 display: flex;
-flex-wrap: wrap;
+/* flex-wrap: wrap; */
 justify-content: space-between;
 color: white;
+flex-direction: row-reverse;
 height: 50px;
+padding: 0% 20%;
+padding-top: 0px;
+}
+
+.title {
+ color: whitesmoke;
+ text-align: center;
 }
 
 .links {
   justify-content:center;
+}
+
+.page-album {
+    display: flex;
+}
+
+.page-album img {
+    width: 300px;
+    /* border: solid red; */
+    border: solid red;
+}
+
+.page-album p {
+    font-size: 150%;
+    color: whitesmoke;
+}
+
+.main-page-album {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.musicas {
+  border: solid red;
+  margin: 5px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 400px;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.musicas label {
+  margin: 4px
+}
+
+.search {
+  display: flex;
+  justify-content: center;
+  padding: 100px;
+  
+}
+
+.imput-search {
+  width: 300px;
+  height: 30px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+
+
+.artist {
+  display: flex;
+    justify-content: center;
+    align-self: baseline;
+    font-size: 30px;
+    margin-top: 10%;
+}
+
+
+.info-cards {
+  display: flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    align-items: center;
+    /* width: 100%; */
+    width: 100%;
+    color: black;
+}
+
+.info {
+  display: flex;
+    flex-direction: column;
+    border: solid grey;
+    border-radius: 10px;
+   background-color: grey;
+   
+  
+    margin: 10px;
+}
+
+.artist img {
+  width: 100%;
+  display:inline-block;
+}
+
+.artist h4 {
+  font-size: 30px;
+  width: 100%;
+  display: flex;
+  color: black;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.artist a {
+  color: black;
+  font-size: 30px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+
+
+.resultadoAlbum {
+  display: flex;
+  height: 50px;
+  width: 100%;
+  justify-content: center;
 }
 
 .carregando {
@@ -69,13 +204,3 @@ height: 50px;
   text-align: center;
 }
 
-.lista {
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
-  padding-top: 30px;
-}
-
-img {
-  border: solid red;
-}
