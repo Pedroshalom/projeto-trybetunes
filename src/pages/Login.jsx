@@ -1,58 +1,70 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Loading from '../components/Loading';
 import { createUser } from '../services/userAPI';
-import Loading from '../Loading';
+import '../styles/Login.css';
 
 class Login extends Component {
   state = {
-    nome: '',
+    name: '',
     loading: false,
-    buttonClick: false,
   };
 
   handleClick = () => {
-    this.setState({ buttonClick: true });
-    const { nome } = this.state;
+    const { name } = this.state;
+    const { history } = this.props;
     this.setState({ loading: true }, async () => {
-      await createUser({ name: nome });
-      this.setState({ loading: false });
+      await createUser({ name });
+      history.push('search');
+    });
+  };
+
+  handleChange = ({ target }) => {
+    const { value } = target;
+    this.setState({
+      name: value,
     });
   };
 
   render() {
-    const { nome, loading, buttonClick } = this.state;
-    const numberMin = 3;
+    const { name, loading } = this.state;
+    const minlength = 3;
     return (
-      <div data-testid="page-login" className="login-page">
-        {loading === true && (
-          <Loading />
-        )}
-        {
-          (!loading && buttonClick) && (
-            <Redirect to="/search" />
-          )
-        }
-        Nome:
-        <input
-          className="imput"
-          placeholder="Digite seu nome"
-          type="text"
-          data-testid="login-name-input"
-          onChange={ ({ target: { value } }) => this.setState({ nome: value }) }
-        />
-
-        <button
-          className="butao"
-          type="button"
-          data-testid="login-submit-button"
-          onClick={ this.handleClick }
-          disabled={ nome.length < numberMin }
-        >
-          Entrar
-        </button>
+      <div data-testid="page-login" className="page-login">
+        <form>
+          <p className="title-login">🎧 Som na caixa </p>
+          <label htmlFor="login-name-input" className="name">
+            Nome:
+            <input
+              className="login-name-input"
+              id="login-name-input"
+              data-testid="login-name-input"
+              type="text"
+              value={ name }
+              onChange={ this.handleChange }
+            />
+          </label>
+          <button
+            className="button-login"
+            type="button"
+            data-testid="login-submit-button"
+            disabled={ name.length < minlength }
+            onClick={ this.handleClick }
+          >
+            Entrar
+          </button>
+          {loading && (
+            <Loading />
+          )}
+        </form>
       </div>
     );
   }
 }
+
+Login.propTypes = {
+  handleChange: PropTypes.func.isRequired,
+  history: PropTypes.func.isRequired,
+}.isRequired;
 
 export default Login;

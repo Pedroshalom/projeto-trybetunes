@@ -1,41 +1,72 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { getUser } from '../services/userAPI';
-import Loading from '../Loading';
+import Loading from './Loading';
+import '../styles/header.css';
+import userIcon from '../styles/user-circle-solid.png';
 
-class Header extends React.Component {
-  state = {
-    clientName: '',
-    loading: false,
-  };
+class Header extends Component {
+  constructor() {
+    super();
 
-  componentDidMount() {
-    this.getUsername();
+    this.state = {
+      userName: {},
+      loading: false,
+    };
   }
 
-  getUsername = async () => {
-    this.setState({ loading: true });
-    const userInfo = await getUser();
-    this.setState({
-      clientName: userInfo,
-      loading: false,
-    });
+  componentDidMount() {
+    this.getUserInformations();
+  }
+
+  getUserInformations = () => {
+    this.setState(
+      {
+        loading: true },
+      async () => {
+        const informations = await getUser();
+        this.setState({
+          loading: false,
+          userName: informations,
+        });
+      },
+    );
   };
 
   render() {
-    const {
-      clientName,
-      loading,
-    } = this.state;
+    const { userName, loading } = this.state;
     return (
-      <header className="header" data-testid="header-component">
-        <h1 className="title">Som na Caixa</h1>
-        <p className="heeader" data-testid="header-user-name">
-          { loading ? <Loading /> : `${clientName.name}, você está logado` }
-          <Link data-testid="link-to-search" to="/search">Search</Link>
-          <Link data-testid="link-to-favorites" to="/favorites">Favorites</Link>
-          <Link data-testid="link-to-profile" to="/profile">Profile</Link>
-        </p>
+      <header data-testid="header-component" className="header-component">
+        {loading
+          ? (
+            <Loading />
+          ) : (
+            <div className="profile-container">
+              <img src={ userIcon } alt="Foto de perfil" />
+              <p data-testid="header-user-name" className="user-name">{userName.name}</p>
+            </div>
+          )}
+        <Link
+          to="/search"
+          data-testid="link-to-search"
+          className="link-to-search"
+        >
+          Pesquisa
+        </Link>
+        <Link
+          to="/favorites"
+          data-testid="link-to-favorites"
+          className="link-to-favorites"
+        >
+          Favoritas
+        </Link>
+        <Link
+          to="/profile"
+          data-testid="link-to-profile"
+          className="link-to-profile"
+        >
+          Perfil
+        </Link>
       </header>
     );
   }

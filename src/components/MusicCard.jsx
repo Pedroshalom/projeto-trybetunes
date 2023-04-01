@@ -1,87 +1,98 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
+import Loading from './Loading';
 
-import { addSong, removeSong } from '../services/favoriteSongsAPI';
-import Carregando from '../Loading';
-
-class MusicCard extends React.Component {
+class MusicCard extends Component {
   state = {
-    CarregandoTexto: false,
-    isFavorite: false,
+    favoriteMusicsData: [],
+    loading: false,
   };
 
   componentDidMount() {
-    this.favorit();
+    this.recoverFavoriteSongs();
   }
 
-  favorit = () => {
-    const { favList, trackId } = this.props;
-    if (favList.some((song) => song.trackId === trackId)) {
-      this.setState({ isFavorite: true });
-    }
-  };
-
-  adicionaAosFavoritos = async () => {
-    this.setState({ CarregandoTexto: true });
-    await addSong(this.props);
-    this.setState({ CarregandoTexto: false });
-  };
-
-  apagaDosFavoritos = async () => {
-    this.setState({ CarregandoTexto: true });
-    await removeSong(this.props);
-    this.setState({ CarregandoTexto: false });
-  };
-
-  handleCheckbox = ({ target: { checked } }) => {
-    if (checked === true) {
-      this.setState({ isFavorite: true });
-      this.adicionaAosFavoritos();
+  requestFavoriteApi = (object) => {
+    const { favoriteMusicsData } = this.state;
+    const { handleChange } = this.props;
+    const search = favoriteMusicsData.some((item) => item.trackId === object.trackId);
+    if (search) {
+      this.setState({ loading: true }, async () => {
+        await removeSong(object);
+        if (handleChange) {
+          handleChange(object.trackId);
+        }
+        await this.recoverFavoriteSongs();
+        this.setState({ loading: false });
+      });
     } else {
-      this.setState({ isFavorite: false });
-      this.apagaDosFavoritos();
+      this.setState({ loading: true }, async () => {
+        await addSong(object);
+        await this.recoverFavoriteSongs();
+        this.setState({ loading: false });
+      });
     }
+  };
+
+  recoverFavoriteSongs = async () => {
+    const ApiResponse = await getFavoriteSongs();
+    this.setState({
+      favoriteMusicsData: ApiResponse,
+    });
   };
 
   render() {
-    const { trackName, previewUrl, trackId } = this.props;
-    const { CarregandoTexto, isFavorite } = this.state;
-    if (CarregandoTexto) return <Carregando />;
+    const { trackName, previewUrl, trackId, musica } = this.props;
+    const { loading, favoriteMusicsData } = this.state;
     return (
-      <div className="musicas">
-        <h4>{trackName}</h4>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
+      <div className="music-card">
+        <p>{trackName}</p>
+        <audio data-testid="audio-component" src={ previewUrl } controls className="audi">
           <track kind="captions" />
-          Não Encontrado!
-          {' '}
-          <p>áudio</p>
-          .
+          O seu navegador não suporta o elemento
+          <code>audio</code>
         </audio>
         <div>
-          {' '}
-          <label htmlFor="favoriteInput">
+          <label htmlFor={ `checkbox-music-${trackId}` } className="like">
+            Favorita
             <input
-              id="favoriteInput"
+              id={ `checkbox-music-${trackId}` }
               data-testid={ `checkbox-music-${trackId}` }
               type="checkbox"
-              onChange={ this.handleCheckbox }
-              checked={ isFavorite }
+              className="check"
+              checked={
+                favoriteMusicsData.some((item) => item.trackId === trackId)
+              }
+              onChange={ () => {
+                this.requestFavoriteApi(musica);
+              } }
             />
-            Favorita
+            <i />
           </label>
+          {
+            loading && <Loading />
+          }
         </div>
       </div>
     );
   }
 }
 
+// no ultimo teste do requisito 9, João Matheus da tribo B me auxiliou da seguinte forma:
+// trocar onClick do meu input do tipo checkbox para onChange e alteração de um detalhe
+// da minha função recoverFavoriteSongs com uso do spread.
+
+// o requisito 10 passou automaticamente ao resolver problema do requisito 8 e 9 que eu estava tendo, nao percebi.
+
 MusicCard.propTypes = {
   trackName: PropTypes.string.isRequired,
   previewUrl: PropTypes.string.isRequired,
-  trackId: PropTypes.string.isRequired,
-  favList: PropTypes.shape({
-    some: PropTypes.func.isRequired,
-  }).isRequired,
+  trackId: PropTypes.number.isRequired,
+  musica: PropTypes.shape().isRequired,
 };
 
+MusicCard.propTypes = {
+  handleChange: PropTypes.func,
+}.isRequired;
 export default MusicCard;

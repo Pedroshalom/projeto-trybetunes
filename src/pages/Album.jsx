@@ -1,70 +1,57 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
-import { getFavoriteSongs } from '../services/favoriteSongsAPI';
-import Carregando from '../Loading';
+import '../styles/album.css';
 
-class Album extends React.Component {
+class Album extends Component {
   state = {
-    CarregandoTexto: false,
-    listaDeMusicas: [],
-    artistName: '',
-    collectionName: '',
-    artworkUrl100: '',
-    musicaFavorita: [],
+    musicsList: [],
   };
 
   componentDidMount() {
-    this.getlistaDeMusicas();
-    this.getListOfFavs();
+    this.requestApi();
   }
 
-  updateState = (requestedSongs) => {
-    this.setState({ artistName: requestedSongs[0].artistName,
-      collectionName: requestedSongs[0].collectionName,
-      artworkUrl100: requestedSongs[1].artworkUrl100 });
-  };
-
-  getlistaDeMusicas = async () => {
+  requestApi = async () => {
     const { match: { params: { id } } } = this.props;
-    const requestedSongs = await getMusics(id);
-    this.setState(
-      { listaDeMusicas: requestedSongs },
-      () => this.updateState(requestedSongs),
-    );
-  };
-
-  getListOfFavs = async () => {
-    this.setState({ CarregandoTexto: true });
-    const muscasFavoritas = await getFavoriteSongs();
-    this.setState({ CarregandoTexto: false,
-      musicaFavorita: muscasFavoritas });
+    const music = await getMusics(id);
+    // console.log(music);
+    this.setState({ musicsList: music });
   };
 
   render() {
-    const { listaDeMusicas, artistName,
-      collectionName, artworkUrl100,
-      CarregandoTexto, musicaFavorita } = this.state;
-    if (CarregandoTexto) return <Carregando />;
+    const { musicsList } = this.state;
     return (
-      <div data-testid="page-album">
+      <div data-testid="page-album" className="page-album">
         <Header />
-        <section className="page-album">
-          <div>
-            <img alt="album cover" src={ artworkUrl100 } />
-            <h3 data-testid="album-name">{`${collectionName}`}</h3>
-            <p data-testid="artist-name">{`By ${artistName}`}</p>
+        {musicsList.length > 0 && (
+          <div className="name-details">
+            <h2 data-testid="artist-name">{musicsList[0].artistName}</h2>
+            <h3
+              data-testid="album-name"
+            >
+              {`${musicsList[0].collectionName} - (${musicsList[0].artistName})`}
+            </h3>
+          </div>
+        )}
+        {musicsList.length > 0 && (
+          musicsList.filter((e) => e.trackName).map((eachMusic) => (
+            <div key={ eachMusic.trackName } className="cards-area">
+              <div className="card-audios">
+                <MusicCard
+                  key={ eachMusic.trackName }
+                  trackName={ eachMusic.trackName }
+                  previewUrl={ eachMusic.previewUrl }
+                  trackId={ eachMusic.trackId }
+                  musica={ eachMusic }
+                />
+              </div>
+            </div>
 
-          </div>
-          <div>
-            {
-              listaDeMusicas.flatMap((song) => song.kind === 'song'
-            && <MusicCard { ... song } favList={ musicaFavorita } />)
-            }
-          </div>
-        </section>
+          ))
+        )}
       </div>
     );
   }
@@ -72,7 +59,9 @@ class Album extends React.Component {
 
 Album.propTypes = {
   match: PropTypes.shape({
-    params: PropTypes.string.isRequired,
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+    }).isRequired,
   }).isRequired,
 };
 
