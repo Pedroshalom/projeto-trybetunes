@@ -1,70 +1,72 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import Loading from '../components/Loading';
+import { Redirect } from 'react-router-dom';
+import { Button, TextField, CircularProgress } from '@mui/material';
 import { createUser } from '../services/userAPI';
+import logo from '../fone.avif';
+
 import '../styles/Login.css';
 
 class Login extends Component {
   state = {
     name: '',
+    validName: true,
     loading: false,
+    loadingReady: false,
   };
 
-  handleClick = () => {
+  handleName = ({ target: { value } }) => {
+    this.setState({ name: value }, this.handleButton);
+  };
+
+  handleButton = () => {
     const { name } = this.state;
-    const { history } = this.props;
-    this.setState({ loading: true }, async () => {
-      await createUser({ name });
-      history.push('search');
-    });
+    if (name.length > 2) {
+      this.setState({ validName: false });
+    } else {
+      this.setState({ validName: true });
+    }
   };
 
-  handleChange = ({ target }) => {
-    const { value } = target;
-    this.setState({
-      name: value,
-    });
+  handleClick = async () => {
+    const { name } = this.state;
+    this.setState({ loading: true });
+    await createUser({ name });
+    this.setState({ loading: false, loadingReady: true });
   };
 
   render() {
-    const { name, loading } = this.state;
-    const minlength = 3;
+    const { name, validName, loading, loadingReady } = this.state;
+
     return (
-      <div data-testid="page-login" className="page-login">
-        <form>
-          <p className="title-login">🎧 Som na caixa </p>
-          <label htmlFor="login-name-input" className="name">
-            Nome:
-            <input
-              className="login-name-input"
-              id="login-name-input"
-              data-testid="login-name-input"
-              type="text"
-              value={ name }
-              onChange={ this.handleChange }
-            />
-          </label>
-          <button
-            className="button-login"
-            type="button"
+      <>
+        {loadingReady && <Redirect to="/search" />}
+        <form data-testid="page-login" className="formulario-login">
+          <img src={ logo } alt="" />
+          <h1 className="titulo-login">Music App</h1>
+          <TextField
+            label="Nome"
+            id="outlined-size-small"
+            size="small"
+            sx={ { width: '80%', mb: 1 } }
+            data-testid="login-name-input"
+            onChange={ this.handleName }
+            value={ name }
+          />
+          <Button
+            variant="contained"
+            size="medium"
+            sx={ { width: '80%', mb: 5 } }
             data-testid="login-submit-button"
-            disabled={ name.length < minlength }
+            disabled={ validName }
             onClick={ this.handleClick }
           >
             Entrar
-          </button>
-          {loading && (
-            <Loading />
-          )}
+          </Button>
+          {loading && <CircularProgress />}
         </form>
-      </div>
+      </>
     );
   }
 }
-
-Login.propTypes = {
-  handleChange: PropTypes.func.isRequired,
-  history: PropTypes.func.isRequired,
-}.isRequired;
 
 export default Login;

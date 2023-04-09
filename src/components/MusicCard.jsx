@@ -1,98 +1,98 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { arrayOf } from 'prop-types';
+import { Checkbox } from '@mui/material';
+import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
-import Loading from './Loading';
+
+import Carregando from './Carregando';
+
+import '../styles/MusicCard.css';
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 class MusicCard extends Component {
   state = {
-    favoriteMusicsData: [],
     loading: false,
+    favoriteList: [],
   };
 
-  componentDidMount() {
-    this.recoverFavoriteSongs();
+  async componentDidMount() {
+    this.setState({ favoriteList: await getFavoriteSongs() });
   }
 
-  requestFavoriteApi = (object) => {
-    const { favoriteMusicsData } = this.state;
-    const { handleChange } = this.props;
-    const search = favoriteMusicsData.some((item) => item.trackId === object.trackId);
-    if (search) {
-      this.setState({ loading: true }, async () => {
-        await removeSong(object);
-        if (handleChange) {
-          handleChange(object.trackId);
-        }
-        await this.recoverFavoriteSongs();
-        this.setState({ loading: false });
-      });
-    } else {
-      this.setState({ loading: true }, async () => {
-        await addSong(object);
-        await this.recoverFavoriteSongs();
-        this.setState({ loading: false });
-      });
-    }
-  };
-
-  recoverFavoriteSongs = async () => {
-    const ApiResponse = await getFavoriteSongs();
+  handleFavorite = async (music) => {
     this.setState({
-      favoriteMusicsData: ApiResponse,
+      loading: true,
+    }, async () => {
+      const list = await getFavoriteSongs();
+      if (!list.some((m) => m.trackId === music.trackId)) {
+        await addSong(music);
+      } else {
+        await removeSong(music);
+      }
+      this.setState({ loading: false, favoriteList: await getFavoriteSongs() });
     });
   };
 
   render() {
-    const { trackName, previewUrl, trackId, musica } = this.props;
-    const { loading, favoriteMusicsData } = this.state;
+    const { loading, favoriteList } = this.state;
+    const { selectedAlbum } = this.props;
+
+    if (loading) return <Carregando />;
     return (
-      <div className="music-card">
-        <p>{trackName}</p>
-        <audio data-testid="audio-component" src={ previewUrl } controls className="audi">
-          <track kind="captions" />
-          O seu navegador não suporta o elemento
-          <code>audio</code>
-        </audio>
-        <div>
-          <label htmlFor={ `checkbox-music-${trackId}` } className="like">
-            Favorita
-            <input
-              id={ `checkbox-music-${trackId}` }
-              data-testid={ `checkbox-music-${trackId}` }
-              type="checkbox"
-              className="check"
-              checked={
-                favoriteMusicsData.some((item) => item.trackId === trackId)
-              }
-              onChange={ () => {
-                this.requestFavoriteApi(musica);
-              } }
-            />
-            <i />
-          </label>
-          {
-            loading && <Loading />
-          }
-        </div>
-      </div>
+      <ul className="lista-musicas-album">
+        {selectedAlbum.map((music, index) => (
+          <li key={ `${music.artistId}-${index}` }>
+            {index === 0 && (
+              <>
+                <img
+                  src={ music.artworkUrl100 }
+                  alt={ `Nome do álbum: ${music.collectionName}` }
+                />
+                <p data-testid="artist-name">
+                  { `Nome banda/artista: ${music.artistName}` }
+                </p>
+                <p data-testid="album-name">
+                  { `Nome do álbum: ${music.collectionName}` }
+                </p>
+                <p>{ `Quantidade de músicas: ${music.trackCount}` }</p>
+                <p>{ `Preço: USD ${music.collectionPrice}` }</p>
+              </>
+            )}
+            {index > 0 && (
+              <>
+                <h4>{music.trackName}</h4>
+                <section className="card-musica-checkbox">
+                  <audio data-testid="audio-component" src={ music.previewUrl } controls>
+                    <track kind="captions" />
+                    O seu navegador não suporta o elemento
+                    {' '}
+                    <code>audio</code>
+                    .
+                  </audio>
+                  <Checkbox
+                    { ...label }
+                    icon={ <FavoriteBorder /> }
+                    checkedIcon={ <Favorite /> }
+                    type="checkbox"
+                    data-testid={ `checkbox-music-${music.trackId}` }
+                    id={ `favorita-${index}` }
+                    onChange={ () => this.handleFavorite(music) }
+                    checked={ favoriteList.some((m) => m.trackId === music.trackId) }
+                    color="error"
+                  />
+                </section>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
     );
   }
 }
 
-// no ultimo teste do requisito 9, João Matheus da tribo B me auxiliou da seguinte forma:
-// trocar onClick do meu input do tipo checkbox para onChange e alteração de um detalhe
-// da minha função recoverFavoriteSongs com uso do spread.
-
-// o requisito 10 passou automaticamente ao resolver problema do requisito 8 e 9 que eu estava tendo, nao percebi.
-
 MusicCard.propTypes = {
-  trackName: PropTypes.string.isRequired,
-  previewUrl: PropTypes.string.isRequired,
-  trackId: PropTypes.number.isRequired,
-  musica: PropTypes.shape().isRequired,
-};
-
-MusicCard.propTypes = {
-  handleChange: PropTypes.func,
+  selectedAlbum: arrayOf,
 }.isRequired;
+
 export default MusicCard;

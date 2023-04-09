@@ -1,29 +1,32 @@
-.perfil-page {
-  align-items: center;
+.conteudo-profile {
+  margin: 0 auto;
+  max-width: 725px;
+  padding: 10px;
+}
+
+.conteudo-profile label {
+  display: block;
+  margin: 20px 0;
+}
+
+.conteudo-profile p {
+  background: whitesmoke;
+  border-bottom: 2px solid gray;
+  border-radius: 3px 3px 0 0;
+  flex-grow: 1;
+  padding: 5px;
+}
+
+.descricao {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 80px;
+  flex-wrap: wrap;
 }
 
-.profile-name h3 {
-  font-weight: 600;
+.titulo-profile {
+  margin: 40px 0;
+  text-align: center;
 }
 
-.profile-email {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.profile-description h3 {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.profile-image {
-  border-radius: 50%;
-  height: 200px;
+.botao-editar-perfil {
+  text-decoration: none;
 }

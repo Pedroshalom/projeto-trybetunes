@@ -1,0 +1,34 @@
+.formulario-busca-banda {
+  margin: 0 auto;
+  max-width: 725px;
+  padding: 10px;
+}
+
+.lista-albuns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  list-style-type: none;
+  margin: 0 auto;
+  max-width: 725px;
+}
+
+.lista-albuns a {
+  border-radius: 1px;
+  box-shadow: 1px 1px 3px gray;
+  color: black;
+  margin: 5px;
+  padding: 5px;
+  text-decoration: none;
+  width: 45%;
+}
+
+.lista-albuns img {
+  display: block;
+  margin: 0 auto 20px;
+}
+
+.titulo-pagina-buscas {
+  margin: 40px 0;
+  text-align: center;
+}

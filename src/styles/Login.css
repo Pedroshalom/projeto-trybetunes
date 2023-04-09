@@ -1,67 +1,33 @@
-body {
-  background: lightgray;
-  font-family: monospace;
-  font-size: 15px;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.name {
+/* body {
+  background-color: black;
+} */
+
+img {
+  height: 200px;
+}
+
+.btn {
+  color: whitesmoke;
+  width: 580px;
+}
+
+.formulario-login {
   align-items: center;
   display: flex;
   flex-direction: column;
-  font-weight: 1000;
-  height: 30px;
-  margin: 20px 30px;
-}
-
-.login-name-input {
-  background-color: #2b0413;
-  border: 2px solid #e25d52;
-  border-radius: 15px;
-  box-shadow: 0 0 25px #e25d52;
-  color: white;
-  display: flex;
-  justify-content: center;
-  margin: 0 auto;
-  padding: 5px;
-  width: 50%;
-}
-
-.page-login {
-  align-items: center;
-  background: #35e383;
-  display: flex;
   height: 100vh;
   justify-content: center;
-  width: 100vw;
-}
-
-.title-login {
-  font-size: 30px;
-  text-align: center;
-}
-
-.button-login {
-  align-items: center;
-  background-color: #2b0413;
-  border: 2px solid #e25d52;
-  border-radius: 15px;
-  box-shadow: 0 0 25px #e25d52;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  height: 30px;
-  justify-content: center;
   margin: 0 auto;
-  width: 50%;
+  max-width: 725px;
 }
 
-.logo-music {
-  display: flex;
-  margin-left: auto;
-  margin-right: auto;
-  width: 40%;
-}
-
-.headerName {
-  color: white;
+.titulo-login {
+  color: blue;
+  margin: 10px 0;
 }

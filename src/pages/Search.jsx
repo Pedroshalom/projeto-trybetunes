@@ -1,100 +1,127 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
+import { Button, TextField } from '@mui/material';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
-import Loading from '../components/Loading';
-import '../styles/search.css';
+
+import Header from '../components/Header';
+import Carregando from '../components/Carregando';
+
+import '../styles/Search.css';
 
 class Search extends Component {
   state = {
-    searchArtistName: '',
-    loading: false,
-    artistResult: [],
     nameArtist: '',
+    artistNameBackUp: '',
+    searchResult: [],
+    disableButton: true,
+    loading: false,
+    searchStarted: false,
   };
 
-  handleChange = ({ target }) => {
-    const { value } = target;
+  handleArtist = ({ target: { value } }) => {
     this.setState({
-      searchArtistName: value,
       nameArtist: value,
-    });
+      artistNameBackUp: value,
+    }, this.handleButton);
   };
 
-  handleSubmit = async () => {
-    const { searchArtistName } = this.state;
-    this.setState({ loading: true });
-    const searchResults = await searchAlbumsAPI(searchArtistName);
+  handleButton = () => {
+    const { nameArtist } = this.state;
+    if (nameArtist.length > 1) {
+      this.setState({ disableButton: false });
+    } else {
+      this.setState({ disableButton: true });
+    }
+  };
+
+  searchArtists = async () => {
+    const { nameArtist } = this.state;
+    this.setState({ loading: true, searchStarted: true });
+    const albumList = await searchAlbumsAPI(nameArtist);
     this.setState({
+      searchResult: albumList,
       loading: false,
-      artistResult: searchResults,
-      searchArtistName: '',
+      nameArtist: '',
+      disableButton: true,
     });
   };
 
   render() {
-    const { searchArtistName, loading, artistResult, nameArtist } = this.state;
-    const minlength = 2;
-    const noWords = 0;
+    const {
+      nameArtist,
+      disableButton,
+      loading,
+      searchResult,
+      artistNameBackUp,
+      searchStarted,
+    } = this.state;
+
     return (
-      <div data-testid="page-search" className="page-search">
+      <>
         <Header />
-        {
-          loading && <Loading className="loading-search" />
-        }
-        {
-          !loading && (
-            <form className="form-search">
-              <label htmlFor="search-artist-input">
-                <input
-                  className="input-search"
-                  id="search-artist-input"
-                  data-testid="search-artist-input"
-                  placeholder="Nome do artista ou banda"
-                  type="text"
-                  onChange={ this.handleChange }
-                  value={ searchArtistName }
-                />
-              </label>
-              <button
+        {loading && <Carregando />}
+        <form data-testid="page-search" className="formulario-busca-banda">
+          {!loading && (
+            <>
+              <TextField
+                label="Banda / Artista / Álbum"
+                variant="filled"
+                type="text"
+                name="searchArtist"
+                id="searchArtist"
+                data-testid="search-artist-input"
+                onChange={ this.handleArtist }
+                value={ nameArtist }
+                size="small"
+                sx={ { mt: '10px', mb: '5px' } }
+                fullWidth
+              />
+              <Button
+                variant="contained"
                 type="button"
-                className="button-search"
                 data-testid="search-artist-button"
-                disabled={ searchArtistName.length < minlength }
-                onClick={ this.handleSubmit }
+                disabled={ disableButton }
+                className="button-search-artist"
+                onClick={ this.searchArtists }
+                size="medium"
+                fullWidth
               >
                 Pesquisar
-              </button>
-            </form>
-          )
-        }
-        <div>
-          { artistResult.length > noWords ? (
-            <div className="details">
-              <h1 className="result-name">{`Resultado de álbuns de: ${nameArtist}`}</h1>
-              {
-                artistResult.map((element, index) => (
-                  <div key={ `${element.artistId} ${index}` } className="album-card">
-                    <div className="card-area">
-                      <img src={ element.artworkUrl100 } alt={ element.artistName } />
-                      <h2>{`Álbum ${element.trackCount} ${element.collectionName}`}</h2>
-                      <p>{`Artista ${element.artistName}`}</p>
-                      <Link
-                        to={ `/album/${element.collectionId}` }
-                        data-testid={ `link-to-album-${element.collectionId}` }
-                      >
-                        Albúm
-                      </Link>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          ) : (
-            <h2 className="notfound">Nenhum álbum foi encontrado</h2>
+              </Button>
+            </>
           )}
-        </div>
-      </div>
+        </form>
+        <main>
+          {searchResult.length > 0 && (
+            <>
+              <h2
+                className="titulo-pagina-buscas"
+              >
+                {`Resultado de álbuns de: ${artistNameBackUp}`}
+              </h2>
+              <ul className="lista-albuns">
+                {searchResult.map((album) => (
+                  <Link to={ `/album/${album.collectionId}` } key={ album.collectionId }>
+                    <li data-testid={ `link-to-album-${album.collectionId}` }>
+                      <img
+                        src={ album.artworkUrl100 }
+                        alt={ album.collectionName }
+                      />
+                      <p>{`Album: ${album.collectionName}`}</p>
+                      <p>{`Artista: ${album.artistName}`}</p>
+                      <p>{`Preço: USD ${album.collectionPrice}`}</p>
+                      <p>{`Qnt de músicas: ${album.trackCount}`}</p>
+                    </li>
+                  </Link>
+                ))}
+              </ul>
+            </>
+          )}
+          {searchStarted && !loading && searchResult.length < 1 && (
+            <h2 className="titulo-pagina-buscas">Nenhum álbum foi encontrado 😥</h2>
+          )}
+        </main>
+      </>
     );
   }
 }
